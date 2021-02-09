@@ -15,6 +15,7 @@ namespace QuoridorProject
             public int x;
             public int y;
         }
+        private Wall walls = new Wall();
         private int index_possibleMoves = 0;
         private Point[] possibleMove = new Point[4];
         private int currentPlayer = 0;
@@ -29,14 +30,7 @@ namespace QuoridorProject
             // pe = PaintEventArgs;
             pArr = new Player[4];
             this.numOfPlayers = 0;
-            this.board = new Cell[ROW, COL];
-            for (int i = 0; i < ROW; i++)
-            {
-                for (int j = 0; j < COL; j++)
-                {
-                    this.board[i, j] = new Cell();
-                }
-            }
+            
             //for (int i = 0; i < pArr.Length; i++)
             //{
             //    pArr[i] = new Player();
@@ -45,6 +39,36 @@ namespace QuoridorProject
 
         }
 
+        public void SetCellBoard()
+        {
+            this.board = new Cell[ROW, COL];
+            for (int i = 0; i < ROW; i++)
+            {
+                for (int j = 0; j < COL; j++)
+                {
+                    this.board[i, j] = new Cell(i, j, numOfPlayers);
+                }
+            }
+            for (int i = 0; i < numOfPlayers; i++)
+            {
+                board[pArr[i].x, pArr[i].y].Change(pArr[i].num);
+            }
+        }
+
+        public Tuple<int, int> GetWalls()
+        {
+            Player p = null;
+            for (int i = 0; i < numOfPlayers; i++)
+            {
+                if (pArr[i].num == currentPlayer)
+                {
+                    p = pArr[i];
+                    break;
+                }
+
+            }
+            return Tuple.Create(p.walls, currentPlayer);
+        }
 
         public void AddPlayer()
         {
@@ -58,7 +82,6 @@ namespace QuoridorProject
                     num = 0
                 };
                 pArr[0] = p;
-                board[p.x, p.y].Change(p.num);
                 //p.player = Players.BLACK;
                 this.numOfPlayers++;
             }
@@ -72,7 +95,6 @@ namespace QuoridorProject
                     num = 1
                 };
                 pArr[1] = p;
-                board[p.x, p.y].Change(p.num);
                 //p.player = Players.WHITE;
                 this.numOfPlayers++;
             }
@@ -86,7 +108,6 @@ namespace QuoridorProject
                     num = 2
                 };
                 pArr[2] = p;
-                board[p.x, p.y].Change(p.num);
                 //p.player = Players.RED;
                 this.numOfPlayers++;
             }
@@ -100,7 +121,6 @@ namespace QuoridorProject
                     num = 3
                 };
                 pArr[3] = p;
-                board[p.x, p.y].Change(p.num);
                 //p.player = Players.BLUE;
                 this.numOfPlayers++;
             }
@@ -177,7 +197,7 @@ namespace QuoridorProject
             {
                 if (possibleMove[i].x == xCell && possibleMove[i].y == yCell)
                 {
-                    board[p.x, p.y].DeleteImage();
+                    board[p.x, p.y].DeleteImage(p.x,p.y,numOfPlayers);
                     board[xCell, yCell].Change(p.num);
                     p.x = xCell;
                     p.y = yCell;
@@ -192,8 +212,50 @@ namespace QuoridorProject
         }
 
         public void TurnWall(int x, int y)
-        { 
-            
+        {
+            Player p = null;
+            for (int i = 0; i < numOfPlayers; i++)
+            {
+                if (pArr[i].num == currentPlayer)
+                    p = pArr[i];
+            }
+            if (p == null)
+                return;
+            if (p.walls == 0)
+                return;
+            // Vertical wall
+            if (x % 60 >= 50 && y >= 0 && y <= 460)
+            {
+                int xCell = y / 60;
+                int yCell = x / 60;
+                if (!walls.IsFreeVertical(xCell, yCell) || !walls.IsFreeVertical(xCell + 1, yCell) 
+                    || walls.IsHorizontal(xCell,yCell))
+                    return;
+                walls.vertical[xCell, yCell] = 1;
+                walls.vertical[xCell + 1, yCell ] = 2;
+                matrix[xCell, yCell].right = null;
+                matrix[xCell+1, yCell].right = null;
+                matrix[xCell , yCell+1].left = null;
+                matrix[xCell + 1, yCell+1].left = null;
+                p.walls--;
+                currentPlayer = (p.num == 0) ? 1 : 0;
+            }
+            if (y % 60 >= 50 && x >= 0 && x <= 470)
+            {
+                int xCell = y / 60;
+                int yCell = x / 60;
+                if (!walls.IsFreeHorizontal(xCell, yCell)|| !walls.IsFreeHorizontal(xCell, yCell+1)
+                    || walls.IsVertical(xCell, yCell))
+                    return;
+                walls.horizontal[xCell, yCell] = 1;
+                walls.horizontal[xCell, yCell + 1] = 2;
+                matrix[xCell, yCell].down = null;
+                matrix[xCell, yCell+1].down = null;
+                matrix[xCell+1, yCell].up = null;
+                matrix[xCell+1, yCell+1].up = null;
+                p.walls--;
+                currentPlayer = (p.num == 0) ? 1 : 0;
+            }
         }
 
         public void PlayerTurn(int x, int y)
@@ -209,41 +271,6 @@ namespace QuoridorProject
             else
                 TurnMove(x, y);
             
-            //if (p.x != COL && matrix[p.x, p.y].down != null && matrix[p.x, p.y].down.id == matrix[xCell, yCell].id)
-            //{
-            //    board[p.x, p.y].DeleteImage();
-            //    board[xCell, yCell].Change(p.num);
-            //    p.x = xCell;
-            //    p.y = yCell;
-            //    currentPlayer = (p.num == 0) ? 1 : 0;
-            //}
-            //else if (p.x != 0 && matrix[p.x, p.y].up != null && matrix[p.x, p.y].up.id == matrix[xCell, yCell].id)
-            //{
-            //    board[p.x, p.y].DeleteImage();
-            //    board[xCell, yCell].Change(p.num);
-            //    p.x = xCell;
-            //    p.y = yCell;
-            //    currentPlayer = (p.num == 0) ? 1 : 0;
-
-            //}
-            //else if (p.y != 0 && matrix[p.x, p.y].left != null && matrix[p.x, p.y].left.id == matrix[xCell, yCell].id)
-            //{
-            //    board[p.x, p.y].DeleteImage();
-            //    board[xCell, yCell].Change(p.num);
-            //    p.x = xCell;
-            //    p.y = yCell;
-            //    currentPlayer = (p.num == 0) ? 1 : 0;
-
-            //}
-            //else if (p.y != COL && matrix[p.x, p.y].right != null && matrix[p.x, p.y].right.id == matrix[xCell, yCell].id)
-            //{
-            //    board[p.x, p.y].DeleteImage();
-            //    board[xCell, yCell].Change(p.num);
-            //    p.x = xCell;
-            //    p.y = yCell;
-            //    currentPlayer = (p.num == 0) ? 1 : 0;
-
-            //}
             UpdateBoard();
             if (Iswin())
             {
@@ -257,7 +284,9 @@ namespace QuoridorProject
             for (int i = 0; i < index_possibleMoves; i++)
             {
                 // initialize all the previous possible moves
-                this.board[possibleMove[i].x, possibleMove[i].y].DeleteImage();
+                int x = possibleMove[i].x;
+                int y = possibleMove[i].y;
+                this.board[x,y ].DeleteImage(x,y,numOfPlayers);
             }
             this.index_possibleMoves = 0;
         }
@@ -384,37 +413,30 @@ namespace QuoridorProject
             //{
                 int x = 0;
                 int y = 0;
-                for (int i = 0; i < board.GetLength(0); i++)
+            for (int i = 0; i < board.GetLength(0); i++)
+            {
+                for (int j = 0; j < board.GetLength(1); j++)
                 {
-                    for (int j = 0; j < board.GetLength(1); j++)
+                    this.board[i, j].PaintCell(g, x, y);
+                    bool isHor = walls.IsHorizontal(i, j);
+                    bool isVer = walls.IsVertical(i, j);
+                    if (isHor)
                     {
-                        this.board[i, j].PaintCell(g, x, y);
-                        x += 60;
+                        y += 50;
+                        board[i, j].PaintHorizontal(g, x, y);
+                        y -= 50;
                     }
-                    x = 0;
-                    y += 60;
+                    if (isVer)
+                    {
+                        x += 50;
+                        board[i, j].PaintVertical(g, x, y);
+                        x -= 50;
+                    }
+                    x += 60;
                 }
-                //checkwin -> break
-            //}
+                x = 0;
+                y += 60;
+            }
         }
-        //public void PaintBoard(Graphics g)
-        //{
-        //    Board board = new Board();
-        //    // Create Point for upper-left corner of image.
-        //    Point ulCorner = new Point(0, 0);
-        //    for (int i = 0; i < 9; i++)
-        //    {
-        //        for (int j = 0; j < 9; j++)
-        //        {
-        //            g.DrawImage(board.board[i, j].GetImage(), ulCorner);
-        //            ulCorner.X += 6;
-        //        }
-        //        ulCorner.X = 0;
-        //        ulCorner.Y += 6;
-        //    }
-        //    // Draw image to screen.
-        //    board.UpdateBoard();
-        //}
-
     }
 }

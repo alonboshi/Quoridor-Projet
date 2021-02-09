@@ -12,21 +12,63 @@ namespace QuoridorProject
     class Cell
     {
         private Image newImage;
-        public Cell()
+        public Cell(int i,int j,int num)
         {
-            string dir = Directory.GetCurrentDirectory();
-            string filename = Path.Combine(dir, @"NewFolder1\grey_square.jpg");
-            this.newImage = Image.FromFile(filename);
+            DeleteImage(i, j, num);
         }
         public Image GetImage()
         {
             return this.newImage;
         }
-        public void DeleteImage()
+        public void DeleteImage(int x,int y,int num)
         {
-            string dir = Directory.GetCurrentDirectory();
-            string filename = Path.Combine(dir, @"NewFolder1\grey_square.jpg");
-            this.newImage = Image.FromFile(filename);
+            switch (num)
+            {
+
+                case 2:
+                    if (x == 0 || x == 8)
+                    {
+                        string dir = Directory.GetCurrentDirectory();
+                        string filename = Path.Combine(dir, @"NewFolder1\border.jpg");
+                        this.newImage = Image.FromFile(filename);
+                    }
+                    else
+                    {
+                        string dir = Directory.GetCurrentDirectory();
+                        string filename = Path.Combine(dir, @"NewFolder1\grey_square.jpg");
+                        this.newImage = Image.FromFile(filename);
+                    }
+                    break;
+                case 3:
+                    if (x == 0 || x == 8 || y == 0)
+                    {
+                        string dir = Directory.GetCurrentDirectory();
+                        string filename = Path.Combine(dir, @"NewFolder1\border.jpg");
+                        this.newImage = Image.FromFile(filename);
+                    }
+                    else
+                    {
+                        string dir = Directory.GetCurrentDirectory();
+                        string filename = Path.Combine(dir, @"NewFolder1\grey_square.jpg");
+                        this.newImage = Image.FromFile(filename);
+                    }
+                    break;
+                case 4:
+                    if (x == 0 || x == 8 || y == 8 )
+                    {
+                        string dir = Directory.GetCurrentDirectory();
+                        string filename = Path.Combine(dir, @"NewFolder1\border.jpg");
+                        this.newImage = Image.FromFile(filename);
+                    }
+                    else
+                    {
+                        string dir = Directory.GetCurrentDirectory();
+                        string filename = Path.Combine(dir, @"NewFolder1\grey_square.jpg");
+                        this.newImage = Image.FromFile(filename);
+                    }
+                    break;
+            }
+            
         }
         public void Change(int num) {
             switch (num)
@@ -61,7 +103,7 @@ namespace QuoridorProject
         public void Red_pm()
         {
             string dir = Directory.GetCurrentDirectory();
-            string filename = Path.Combine(dir, @"NewFolder1\red_square_pm.png");
+            string filename = Path.Combine(dir, @"NewFolder1\red_square_pm.jpg");
             this.newImage = Image.FromFile(filename);
         }
         public void Black()
@@ -84,10 +126,24 @@ namespace QuoridorProject
         {
 
         }
-        public void PaintCell(Graphics g,int x,int y)
+        public void PaintCell(Graphics g, int x, int y)
         {
-            Point p = new Point(x,y);
+            Point p = new Point(x, y);
             g.DrawImage(this.newImage, p);
+        }
+        public void PaintHorizontal(Graphics g, int x, int y)
+        {
+            Point p = new Point(x, y);
+            string dir = Directory.GetCurrentDirectory();
+            string filename = Path.Combine(dir, @"NewFolder1\wall_horizontal.jpg");
+            g.DrawImage(Image.FromFile(filename), p);
+        }
+        public void PaintVertical(Graphics g, int x, int y)
+        {
+            Point p = new Point(x, y);
+            string dir = Directory.GetCurrentDirectory();
+            string filename = Path.Combine(dir, @"NewFolder1\wall_vertical.jpg");
+            g.DrawImage(Image.FromFile(filename), p);
         }
     }
 }

@@ -8,3 +8,13 @@ C:\Users\Alon\Documents\YudGimel\Project\QuoridorProject\obj\Debug\QuoridorProje
 C:\Users\Alon\Documents\YudGimel\Project\QuoridorProject\obj\Debug\QuoridorProject.pdb
 C:\Users\Alon\Documents\YudGimel\Project\QuoridorProject\obj\Debug\QuoridorProject.Open.resources
 C:\Users\Alon\Documents\YudGimel\Project\QuoridorProject\obj\Debug\QuoridorProject.csprojAssemblyReference.cache
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\bin\Debug\QuoridorProject.exe.config
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\bin\Debug\QuoridorProject.exe
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\bin\Debug\QuoridorProject.pdb
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Debug\QuoridorProject.Open.resources
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Debug\QuoridorProject.Properties.Resources.resources
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Debug\QuoridorProject.csproj.GenerateResource.cache
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Debug\QuoridorProject.csproj.CoreCompileInputs.cache
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Debug\QuoridorProject.exe
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Debug\QuoridorProject.pdb
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Debug\QuoridorProject.csprojAssemblyReference.cache

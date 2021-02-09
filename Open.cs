@@ -26,6 +26,7 @@ namespace QuoridorProject
         {
             board.AddPlayer();
             board.AddPlayer();
+            board.SetCellBoard();
         }
 
         private void Open_Paint(object sender, PaintEventArgs e)
@@ -44,6 +45,22 @@ namespace QuoridorProject
         {
             Graphics g = e.Graphics;
             this.g = g;
+            var items = board.GetWalls(); // item1 - walls, item2 - current player
+            string currentPlayer = "";
+            switch (items.Item2)
+            {
+                case 0:currentPlayer = "Black";
+                    break;
+                case 1:currentPlayer = "Red";
+                    break;
+
+            }
+            int walls = items.Item1;
+            using (Font myFont = new Font("Arial", 14))
+            {
+                e.Graphics.DrawString(currentPlayer+" players' turn!\nYou have "+walls+" walls left."
+                    , myFont, Brushes.Green, new Point(550, 2));
+            }
             board.PaintBoard(g);
             board.PossibleMoves();
             board.UpdateBoard();
@@ -70,6 +87,16 @@ namespace QuoridorProject
         {
             Point screenPosition = MousePosition;
             Point clientPosition = PointToClient(screenPosition);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -23,7 +23,7 @@ namespace QuoridorProject
         {
             this.x = x;
             this.y = y;
-            this.walls = 0;
+            this.walls = 10;
         }
     }
 }
