@@ -13,6 +13,7 @@ namespace QuoridorProject
         //2 - yes . part 2
         public int[,] horizontal { get; set; }
         public int[,] vertical { get; set; }
+        //LinkedList<Tuple<int,int>> ll = new LinkedList<Tuple<int, int>>();
 
         public Wall()
         {

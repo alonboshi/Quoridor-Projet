@@ -27,5 +27,20 @@ namespace QuoridorProject
             this.up = null;
             this.id = id_ver++;
         }
-    }
+
+        public List<Vertices> GetNeighbors()
+        {
+            List<Vertices> neighbors = new List<Vertices>();
+            if (this.up != null)
+                neighbors.Add(this.up);
+            if (this.down != null)
+                neighbors.Add(this.down);
+            if (this.right != null)
+                neighbors.Add(this.right);
+            if (this.left != null)
+                neighbors.Add(this.left);
+            return new List<Vertices>(neighbors) ;
+        }
+
+}
 }

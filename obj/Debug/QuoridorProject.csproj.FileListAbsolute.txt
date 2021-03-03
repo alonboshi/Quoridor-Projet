@@ -18,3 +18,4 @@ C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Debug\QuoridorProje
 C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Debug\QuoridorProject.exe
 C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Debug\QuoridorProject.pdb
 C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Debug\QuoridorProject.csprojAssemblyReference.cache
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Debug\QuoridorProject.Choice.resources

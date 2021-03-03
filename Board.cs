@@ -17,11 +17,11 @@ namespace QuoridorProject
         }
         private Wall walls = new Wall();
         private int index_possibleMoves = 0;
-        private Point[] possibleMove = new Point[4];
+        private Point[] possibleMove = new Point[6];
         private int currentPlayer = 0;
         private Player[] pArr; // array of all players
         private int numOfPlayers; // num of players. at first is 0.
-        private Vertices[,] matrix = new Vertices[9, 9];
+        private Vertices[,] matrix = new Vertices[ROW, COL];
         private const int ROW = 9;
         private const int COL = 9;
         public Cell[,] board;
@@ -37,6 +37,137 @@ namespace QuoridorProject
             //}
             SetVerticesMatrix();
 
+        }
+
+        public bool CanReach(int xCell, int yCell,int place)
+        {
+            bool playerOne = false;
+            bool playerTwo = false;
+            bool playerThree = false;
+            bool playerFour = false;
+
+            // player 1
+            if (numOfPlayers < 1)
+                playerOne = true;
+            else
+            {
+                for (int i = 0; i < ROW; i++)
+                {
+                    //Vertices[,] temp = (Vertices[,])this.matrix.Clone();
+                    List<Vertices> temp_ver= TurnWallTemp(xCell, yCell, place);
+                    if (!(GetShortestPath(pArr[0].x, pArr[0].y, 0, i).Count==0))
+                    {
+                        UndoTurnWallTemp(temp_ver, xCell, yCell, place);
+                        playerOne = true;
+                        break;
+                    }
+                    UndoTurnWallTemp(temp_ver, xCell, yCell, place);
+                }
+            }
+
+            if (numOfPlayers < 2)
+                playerTwo = true;
+            else
+            {
+                for (int i = 0; i < ROW; i++)
+                {
+                    //Vertices[,] temp = (Vertices[,])this.matrix.Clone();
+                    List<Vertices> temp_ver = TurnWallTemp(xCell, yCell, place);
+                    if (!(GetShortestPath(pArr[1].x, pArr[1].y, 8, i).Count==0))
+                    {
+                        UndoTurnWallTemp(temp_ver, xCell, yCell, place);
+                        playerTwo = true;
+                        break;
+                    }
+                    UndoTurnWallTemp(temp_ver, xCell, yCell, place);
+                }
+            }
+            if (numOfPlayers < 3)
+                playerThree = true;
+            if (numOfPlayers < 4)
+                playerFour = true;
+            
+            return playerOne&&playerTwo&&playerThree&&playerFour;
+        }
+
+        public Player CurrentPlayer()
+        {
+            Player p = null;
+            for (int i = 0; i < this.numOfPlayers; i++)
+            {
+                if (pArr[i].num == currentPlayer)
+                {
+                    p = pArr[i];
+                    break;
+                }
+            }
+            return p;
+        }
+        
+        public List<Tuple<int,int>> GetShortestPath(int xStart,int yStart,
+            int xEnd,int yEnd)
+        {
+            List<Tuple<int, int>> shortestPath = new List<Tuple<int, int>>();
+            List<Vertices> path = SearchBFS(matrix[xStart, yStart], matrix[xEnd, yEnd]);
+            foreach (Vertices item in path)
+            {
+                shortestPath.Add(new Tuple<int, int>(item.id/ROW,item.id%ROW));
+            }
+            return shortestPath;
+        }
+
+        public List<Vertices> SearchBFS(Vertices start, Vertices finish)
+        {
+            Vertices startVer, finishVer;
+            startVer = start;
+            finishVer = finish;
+
+            List<Vertices> dispenser = new List<Vertices>();
+            dispenser.Add(startVer);
+
+            Dictionary<Vertices, Vertices> predecessors = new Dictionary<Vertices, Vertices>();
+            predecessors.Add(startVer, finishVer);
+
+            while (dispenser.Count!=0)
+            {
+                Vertices current=dispenser[0];
+                dispenser.RemoveAt(0);
+                if (current == finishVer)
+                    break;
+
+                foreach (Vertices nbr in current.GetNeighbors())
+                {
+                    if (!predecessors.ContainsKey(nbr))
+                    {
+                        predecessors.Add(nbr, current);
+                        dispenser.Add(nbr);
+                    }
+                }
+            }
+            return ConstructPath(predecessors, startVer, finishVer);
+
+        }
+        
+        private List<Vertices> ConstructPath(Dictionary<Vertices, Vertices> predecessors,
+                                     Vertices startVertices, Vertices finishVertices)
+        {
+
+            // use predecessors to work backwards from finish to start,
+            // all the while dumping everything into a linked list
+            List<Vertices> path = new List<Vertices>();
+
+            if (predecessors.ContainsKey(finishVertices))
+            {
+                Vertices currVertices = finishVertices;
+                while (currVertices != startVertices)
+                {
+                    path.Insert(0, currVertices);
+                    currVertices = predecessors[currVertices];
+                }
+                path.Insert(0, startVertices);
+            }
+
+            return path;
         }
 
         public void SetCellBoard()
@@ -57,16 +188,7 @@ namespace QuoridorProject
 
         public Tuple<int, int> GetWalls()
         {
-            Player p = null;
-            for (int i = 0; i < numOfPlayers; i++)
-            {
-                if (pArr[i].num == currentPlayer)
-                {
-                    p = pArr[i];
-                    break;
-                }
-
-            }
+            Player p = CurrentPlayer();
             return Tuple.Create(p.walls, currentPlayer);
         }
 
@@ -128,17 +250,17 @@ namespace QuoridorProject
 
         private void SetVerticesMatrix()
         {
-            for (int row_index = 0; row_index < 9; row_index++)
+            for (int row_index = 0; row_index < ROW; row_index++)
             {
-                for (int col_index = 0; col_index < 9; col_index++)
+                for (int col_index = 0; col_index < ROW; col_index++)
                 {
                     matrix[row_index, col_index] = new Vertices();
                 }
             }
 
-            for (int row_index = 0; row_index < 9; row_index++)
+            for (int row_index = 0; row_index < ROW; row_index++)
             {
-                for (int col_index = 0; col_index < 9; col_index++)
+                for (int col_index = 0; col_index < ROW; col_index++)
                 {
                     //if (this.matrix[row_index, col_index].player == Players.EMPTY)
                     //    continue;
@@ -147,12 +269,12 @@ namespace QuoridorProject
                         this.matrix[row_index, col_index].
                             left = (this.matrix[row_index, col_index - 1]);
                     }
-                    if (col_index < 9 - 1)
+                    if (col_index < ROW - 1)
                     {
                         this.matrix[row_index, col_index].
                             right = (this.matrix[row_index, col_index + 1]);
                     }
-                    if (row_index < 9 - 1)
+                    if (row_index < ROW - 1)
                     {
                         this.matrix[row_index, col_index].
                             down = (this.matrix[row_index + 1, col_index]);
@@ -183,24 +305,17 @@ namespace QuoridorProject
 
         public void TurnMove(int x, int y)
         {
-            Player p = null;
-            for (int i = 0; i < numOfPlayers; i++)
-            {
-                if (pArr[i].num == currentPlayer)
-                    p = pArr[i];
-            }
+            Player p = CurrentPlayer();
             if (p == null)
                 return;
-            int xCell = y / 60;
-            int yCell = x / 60;
             for (int i = 0; i < index_possibleMoves; i++)
             {
-                if (possibleMove[i].x == xCell && possibleMove[i].y == yCell)
+                if (possibleMove[i].x == x && possibleMove[i].y == y)
                 {
                     board[p.x, p.y].DeleteImage(p.x,p.y,numOfPlayers);
-                    board[xCell, yCell].Change(p.num);
-                    p.x = xCell;
-                    p.y = yCell;
+                    board[x, y].Change(p.num);
+                    p.x = x;
+                    p.y = y;
                     currentPlayer = (p.num == 0) ? 1 : 0;
                 }
             }
@@ -211,66 +326,118 @@ namespace QuoridorProject
             
         }
 
-        public void TurnWall(int x, int y)
+        public void UndoTurnWallTemp(List<Vertices> temp_ver, int x, int y, int place)
         {
-            Player p = null;
-            for (int i = 0; i < numOfPlayers; i++)
+            if (place == 1)
             {
-                if (pArr[i].num == currentPlayer)
-                    p = pArr[i];
+                matrix[x, y].right = temp_ver[0];
+                matrix[x + 1, y].right = temp_ver[1];
+                matrix[x, y + 1].left = temp_ver[2];
+                matrix[x + 1, y + 1].left = temp_ver[0];
             }
+            else if (place == 0)
+            {
+                matrix[x, y].down = temp_ver[0];
+                matrix[x, y + 1].down = temp_ver[1];
+                matrix[x + 1, y].up = temp_ver[2];
+                matrix[x + 1, y + 1].up = temp_ver[3];
+            }
+        }
+        
+        public List<Vertices> TurnWallTemp( int x, int y,int place)
+        {
+            List<Vertices> temp_ver = new List<Vertices>();
+            if (place == 1)
+            {
+                temp_ver.Add(matrix[x, y].right); 
+                temp_ver.Add(matrix[x + 1, y].right);
+                temp_ver.Add(matrix[x, y+1].right);
+                temp_ver.Add(matrix[x+1, y+1].right);
+                matrix[x, y].right = null;
+                matrix[x + 1, y].right = null;
+                matrix[x, y + 1].left = null;
+                matrix[x + 1, y + 1].left = null;
+                return temp_ver;
+            }
+            else if(place == 0)
+            {
+                temp_ver.Add(matrix[x, y].down);
+                temp_ver.Add(matrix[x, y+1].down);
+                temp_ver.Add(matrix[x+1, y].up);
+                temp_ver.Add(matrix[x + 1, y + 1].up);
+                matrix[x, y].down = null;
+                matrix[x, y + 1].down = null;
+                matrix[x + 1, y].up = null;
+                matrix[x + 1, y + 1].up = null;
+                return temp_ver;
+            }
+            return temp_ver;
+        }
+
+
+
+        public bool TurnWall(int x, int y,int place) // place 1 for vertical, 0 for horizontal
+        {
+            Player p = CurrentPlayer();
             if (p == null)
-                return;
+                return false;
             if (p.walls == 0)
-                return;
+                return false;
             // Vertical wall
-            if (x % 60 >= 50 && y >= 0 && y <= 460)
+            if (place==1)
             {
-                int xCell = y / 60;
-                int yCell = x / 60;
-                if (!walls.IsFreeVertical(xCell, yCell) || !walls.IsFreeVertical(xCell + 1, yCell) 
-                    || walls.IsHorizontal(xCell,yCell))
-                    return;
-                walls.vertical[xCell, yCell] = 1;
-                walls.vertical[xCell + 1, yCell ] = 2;
-                matrix[xCell, yCell].right = null;
-                matrix[xCell+1, yCell].right = null;
-                matrix[xCell , yCell+1].left = null;
-                matrix[xCell + 1, yCell+1].left = null;
+                if (!walls.IsFreeVertical(x, y) || !walls.IsFreeVertical(x + 1, y) 
+                    || walls.IsHorizontal(x,y))
+                    return false;
+                if (!CanReach(x, y, place))
+                    return false;
+                walls.vertical[x, y] = 1;
+                walls.vertical[x + 1, y ] = 2;
+                matrix[x, y].right = null;
+                matrix[x+1, y].right = null;
+                matrix[x , y+1].left = null;
+                matrix[x + 1, y+1].left = null;
                 p.walls--;
                 currentPlayer = (p.num == 0) ? 1 : 0;
             }
-            if (y % 60 >= 50 && x >= 0 && x <= 470)
+            if (place==0)
             {
-                int xCell = y / 60;
-                int yCell = x / 60;
-                if (!walls.IsFreeHorizontal(xCell, yCell)|| !walls.IsFreeHorizontal(xCell, yCell+1)
-                    || walls.IsVertical(xCell, yCell))
-                    return;
-                walls.horizontal[xCell, yCell] = 1;
-                walls.horizontal[xCell, yCell + 1] = 2;
-                matrix[xCell, yCell].down = null;
-                matrix[xCell, yCell+1].down = null;
-                matrix[xCell+1, yCell].up = null;
-                matrix[xCell+1, yCell+1].up = null;
+                if (!walls.IsFreeHorizontal(x, y)|| !walls.IsFreeHorizontal(x, y+1)
+                    || walls.IsVertical(x, y))
+                    return false;
+                if (!(CanReach(x, y, place)))
+                    return false;
+                walls.horizontal[x, y] = 1;
+                walls.horizontal[x, y + 1] = 2;
+                matrix[x, y].down = null;
+                matrix[x, y+1].down = null;
+                matrix[x+1, y].up = null;
+                matrix[x+1, y+1].up = null;
                 p.walls--;
                 currentPlayer = (p.num == 0) ? 1 : 0;
             }
+            return true;
         }
 
         public void PlayerTurn(int x, int y)
         {
             if (x > 530 || x < 0 || y > 530 || y < 0)
-            {
                 return;
-            }
             if (x % 60 >= 50 && y % 60 >= 50)
-                return;        
+                return;
             if (x % 60 >= 50 || y % 60 >= 50)
-                TurnWall(x,y);
+            {
+                // Vertical wall
+                if (x % 60 >= 50 && y >= 0 && y <= 460)
+                    if (!TurnWall(y / 60, x / 60, 1))
+                        return;
+                //horizontal wall
+                if (y % 60 >= 50 && x >= 0 && x <= 470)
+                    if (!TurnWall(y / 60, x / 60, 0))
+                        return;
+            }
             else
-                TurnMove(x, y);
-            
+                TurnMove(y / 60, x / 60);
             UpdateBoard();
             if (Iswin())
             {
@@ -319,6 +486,22 @@ namespace QuoridorProject
                             possibleMove[index_possibleMoves].y = yCell - 2;
                             index_possibleMoves++;
                         }
+                        else {
+                            if (matrix[xCell, yCell - 1].up != null)
+                            {
+                                this.board[xCell-1, yCell - 1].Change_pm(currentPlayer);
+                                possibleMove[index_possibleMoves].x = xCell - 1;
+                                possibleMove[index_possibleMoves].y = yCell - 1;
+                                index_possibleMoves++;
+                            }
+                            if (matrix[xCell, yCell - 1].down != null)
+                            {
+                                this.board[xCell+1, yCell - 1].Change_pm(currentPlayer);
+                                possibleMove[index_possibleMoves].x = xCell + 1;
+                                possibleMove[index_possibleMoves].y = yCell - 1;
+                                index_possibleMoves++;
+                            }
+                        }
                     }
                     else
                     {
@@ -329,7 +512,7 @@ namespace QuoridorProject
                     }
                 }
             }
-            if (yCell < 9 - 1)
+            if (yCell < ROW - 1)
             {
                 if (this.matrix[xCell, yCell].right != null)
                 {
@@ -342,6 +525,23 @@ namespace QuoridorProject
                             possibleMove[index_possibleMoves].y = yCell + 2;
                             index_possibleMoves++;
                         }
+                        else
+                        {
+                            if (matrix[xCell, yCell + 1].up != null)
+                            {
+                                this.board[xCell - 1, yCell + 1].Change_pm(currentPlayer);
+                                possibleMove[index_possibleMoves].x = xCell - 1;
+                                possibleMove[index_possibleMoves].y = yCell + 1;
+                                index_possibleMoves++;
+                            }
+                            if (matrix[xCell, yCell + 1].down != null)
+                            {
+                                this.board[xCell + 1, yCell + 1].Change_pm(currentPlayer);
+                                possibleMove[index_possibleMoves].x = xCell + 1;
+                                possibleMove[index_possibleMoves].y = yCell + 1;
+                                index_possibleMoves++;
+                            }
+                        }
                     }
                     else
                     {
@@ -352,7 +552,7 @@ namespace QuoridorProject
                     }
                 }
             }
-            if (xCell < 9 - 1)
+            if (xCell < ROW - 1)
             {
                 if (this.matrix[xCell, yCell].down != null)
                 {
@@ -364,6 +564,23 @@ namespace QuoridorProject
                             possibleMove[index_possibleMoves].x = xCell+2;
                             possibleMove[index_possibleMoves].y = yCell ;
                             index_possibleMoves++;
+                        }
+                        else
+                        {
+                            if (matrix[xCell+1, yCell].right != null)
+                            {
+                                this.board[xCell + 1, yCell + 1].Change_pm(currentPlayer);
+                                possibleMove[index_possibleMoves].x = xCell + 1;
+                                possibleMove[index_possibleMoves].y = yCell + 1;
+                                index_possibleMoves++;
+                            }
+                            if (matrix[xCell+1, yCell ].left != null)
+                            {
+                                this.board[xCell + 1, yCell - 1].Change_pm(currentPlayer);
+                                possibleMove[index_possibleMoves].x = xCell + 1;
+                                possibleMove[index_possibleMoves].y = yCell - 1;
+                                index_possibleMoves++;
+                            }
                         }
                     }
                     else
@@ -387,6 +604,23 @@ namespace QuoridorProject
                             possibleMove[index_possibleMoves].x = xCell - 2;
                             possibleMove[index_possibleMoves].y = yCell;
                             index_possibleMoves++;
+                        }
+                        else
+                        {
+                            if (matrix[xCell - 1, yCell].right != null)
+                            {
+                                this.board[xCell - 1, yCell + 1].Change_pm(currentPlayer);
+                                possibleMove[index_possibleMoves].x = xCell -1;
+                                possibleMove[index_possibleMoves].y = yCell + 1;
+                                index_possibleMoves++;
+                            }
+                            if (matrix[xCell - 1, yCell].left != null)
+                            {
+                                this.board[xCell - 1, yCell - 1].Change_pm(currentPlayer);
+                                possibleMove[index_possibleMoves].x = xCell - 1;
+                                possibleMove[index_possibleMoves].y = yCell - 1;
+                                index_possibleMoves++;
+                            }
                         }
                     }
                     else
