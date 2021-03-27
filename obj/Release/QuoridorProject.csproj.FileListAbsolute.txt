@@ -1,0 +1,11 @@
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\bin\Release\QuoridorProject.exe.config
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\bin\Release\QuoridorProject.exe
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\bin\Release\QuoridorProject.pdb
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Release\QuoridorProject.csprojAssemblyReference.cache
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Release\QuoridorProject.Choice.resources
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Release\QuoridorProject.Open.resources
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Release\QuoridorProject.Properties.Resources.resources
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Release\QuoridorProject.csproj.GenerateResource.cache
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Release\QuoridorProject.csproj.CoreCompileInputs.cache
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Release\QuoridorProject.exe
+C:\Users\Alon\Documents\YudGimel\Project\Quoridor-Projet\obj\Release\QuoridorProject.pdb
