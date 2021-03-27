@@ -7,7 +7,7 @@ using static QuoridorProject.Vertices;
 
 namespace QuoridorProject
 {
-    class Player
+    public class Player
     {
         public int x { get; set; }
         public int y { get; set; }
@@ -15,7 +15,7 @@ namespace QuoridorProject
         public int goaly { get; set; }
         public int num { get; set; }
         public int walls { get; set; }
-        public Players player { get; set; }
+        private Players player { get; set; }
 
         public Player()
         { }

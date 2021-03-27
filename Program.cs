@@ -16,7 +16,7 @@ namespace QuoridorProject
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Open());
+            Application.Run(new Choice());
         }
     }
 }

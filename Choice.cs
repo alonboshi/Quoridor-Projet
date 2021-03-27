@@ -21,5 +21,18 @@ namespace QuoridorProject
         {
 
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Open open = new Open(2);
+            open.Show();
+            //this.Close();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Open open = new Open(1);
+            open.Show();
+        }
     }
 }

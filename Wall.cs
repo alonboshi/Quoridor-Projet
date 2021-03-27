@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace QuoridorProject
 {
-    class Wall
+    public class Wall
     {
         //0 - no wall
         //1 - yes . part 1

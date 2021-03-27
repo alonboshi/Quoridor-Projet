@@ -6,27 +6,36 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
 
 namespace QuoridorProject
 {
     public partial class Open : Form
     {
-        Board board = new Board();
+        int choice;
+        Board board;
         Graphics g;
 
-        public Open(int num) { }
+        public Open(int num) {
+            InitializeComponent();
+            this.choice = num;
+            this.board = new Board(num);
+        }
 
         public Open()
         {
-            InitializeComponent();
+         //   InitializeComponent();
         }
 
         private void Open_Load(object sender, EventArgs e)
         {
+            
             board.AddPlayer();
             board.AddPlayer();
             board.SetCellBoard();
+
+            
         }
 
         private void Open_Paint(object sender, PaintEventArgs e)
@@ -49,9 +58,11 @@ namespace QuoridorProject
             string currentPlayer = "";
             switch (items.Item2)
             {
-                case 0:currentPlayer = "Black";
+                case 0:
+                    currentPlayer = "Black";
                     break;
-                case 1:currentPlayer = "Red";
+                case 1:
+                    currentPlayer = "Red";
                     break;
 
             }
@@ -61,11 +72,34 @@ namespace QuoridorProject
                 e.Graphics.DrawString(currentPlayer+" players' turn!\nYou have "+walls+" walls left."
                     , myFont, Brushes.Green, new Point(550, 2));
             }
+            if (board.Iswin() != -1)
+            {
+                switch (board.CurrentPlayer().num)
+                {
+                    case 0: MessageBox.Show("Red's Player won!!");
+                        break;
+                    case 1: MessageBox.Show("Black's Player won!!");
+                        break;
+
+
+                }
+                /*pictureBox1.Refresh();
+                string message = "You did not enter a server name. Cancel this operation?";
+                string caption = "Error Detected in Input";
+                MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                DialogResult result;
+                // Displays the MessageBox.
+                result = MessageBox.Show(this,message, caption, buttons);
+                if (result == DialogResult.Yes)
+                {
+                    // Closes the parent form.
+                    this.Close();
+                }*/
+            }
             board.PaintBoard(g);
-            board.PossibleMoves();
+            board.PossibleMoves(null);
             board.UpdateBoard();
             pictureBox1.Refresh();
-
         }
 
         private void Open_Mousedown(object sender, MouseEventArgs e)
@@ -75,10 +109,19 @@ namespace QuoridorProject
 
         private void MouseDown_pb1(object sender, MouseEventArgs e)
         {
-            //MessageBox.Show(e.X + " " + e.Y);
-            board.PlayerTurn(e.X, e.Y);
+            
+            if (choice == 2)
+            {
+                //MessageBox.Show(e.X + " " + e.Y);
+                board.PlayerTurn(e.X, e.Y);
+            }
+            else if (choice == 1)
+            {
+                board.PlayerTurn(e.X, e.Y);
+            }
+            
             board.InitPossibleMoves();
-            board.PossibleMoves();
+            board.PossibleMoves(null);
             board.UpdateBoard();
             pictureBox1.Refresh();
         }

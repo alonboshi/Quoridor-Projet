@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace QuoridorProject
 {
-    class Vertices
+    public class Vertices
     {
         public enum Players { EMPTY, BLACK, WHITE, RED, BLUE };
         public Players player { get; set; }
@@ -28,18 +28,23 @@ namespace QuoridorProject
             this.id = id_ver++;
         }
 
-        public List<Vertices> GetNeighbors()
+        public List<Vertices> GetNeighbors(Board.Point[] arr,int index,Vertices[,] matrix)
         {
+
             List<Vertices> neighbors = new List<Vertices>();
-            if (this.up != null)
-                neighbors.Add(this.up);
-            if (this.down != null)
-                neighbors.Add(this.down);
-            if (this.right != null)
-                neighbors.Add(this.right);
-            if (this.left != null)
-                neighbors.Add(this.left);
-            return new List<Vertices>(neighbors) ;
+            //if (this.up != null)
+            //    neighbors.Add(this.up);
+            //if (this.down != null)
+            //    neighbors.Add(this.down);
+            //if (this.right != null)
+            //    neighbors.Add(this.right);
+            //if (this.left != null)
+            //    neighbors.Add(this.left);
+            for (int i = 0; i < index; i++)
+            {
+                neighbors.Add(matrix[arr[i].x, arr[i].y]);
+            }
+            return neighbors ;
         }
 
 }
