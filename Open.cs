@@ -30,19 +30,16 @@ namespace QuoridorProject
 
         private void Open_Load(object sender, EventArgs e)
         {
-            
             board.AddPlayer();
             board.AddPlayer();
             board.SetCellBoard();
-
-            
         }
 
         private void Open_Paint(object sender, PaintEventArgs e)
         {
             //Bitmap bitmap = new Bitmap("NewFolder1/grey_square.jpg");
             //e.Graphics.DrawImage(bitmap, 60, 10);
-            
+
         }
 
         //public Graphics GetG()
@@ -69,8 +66,8 @@ namespace QuoridorProject
             int walls = items.Item1;
             using (Font myFont = new Font("Arial", 14))
             {
-                e.Graphics.DrawString(currentPlayer+" players' turn!\nYou have "+walls+" walls left."
-                    , myFont, Brushes.Green, new Point(550, 2));
+                e.Graphics.DrawString(currentPlayer + " players' turn!\nYou have " + walls + " walls left.\n\n"+board.validWall
+                    , myFont, Brushes.Black, new Point(550, 2));
             }
             if (board.Iswin() != -1)
             {
@@ -140,6 +137,19 @@ namespace QuoridorProject
         private void pictureBox1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            if (choice == 3)
+                while (board.Iswin() == -1)
+                {
+                    board.InitPossibleMoves();
+                    board.PossibleMoves(null);
+                    board.UpdateBoard();
+                    pictureBox1.Refresh();
+                    AI.Move(board, board.CurrentPlayer());
+                }
         }
     }
 }

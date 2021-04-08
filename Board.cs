@@ -17,6 +17,7 @@ namespace QuoridorProject
             public int y;
             public int place;
         }
+        public string validWall =null;
         public Wall walls = new Wall();
         public int index_possibleMoves = 0;
         public Point[] possibleMove = new Point[6];
@@ -31,6 +32,7 @@ namespace QuoridorProject
         internal Cell[,] board;
 
         // ---------------------------constructor--------------------------------
+
         public Board(int choice)
         {
             this.choice = choice;
@@ -241,6 +243,7 @@ namespace QuoridorProject
         /// <param name="y">y index</param>
         public void TurnMove(int x, int y)
         {
+            validWall = null ;
             bool check = false;
             Player p = CurrentPlayer();
             if (p == null)
@@ -258,10 +261,13 @@ namespace QuoridorProject
                     InitPossibleMoves();
                     PossibleMoves(null);
                     UpdateBoard();
+                    break;
                 }
             }
             if (this.choice == 1&&check)
                 AI.Move(this, CurrentPlayer());
+            if (!check)
+                validWall = " Illeagal Place to move! ";
         }
 
         public Point TurnMoveTemp(int x, int y)
@@ -288,34 +294,45 @@ namespace QuoridorProject
         public void ChangePlayer(Player p) {
             currentPlayer = (p.num == 0) ? 1 : 0;
         }
+
         public Player ChangePlayerWithReturn(Player p)
         {
             currentPlayer = (p.num == 0) ? 1 : 0;
             return pArr[currentPlayer];
         }
 
-            /// <summary>
-            /// Function which places the wall in the given indexes.
-            /// </summary>
-            /// <param name="x">x index</param>
-            /// <param name="y">y index</param>
-            /// <param name="place">1 for vertical wall and 0 for horizontal wall.</param>
-            /// <returns>Returns true if the indexes were good and false if not.</returns>
-            public bool TurnWall(int x, int y, int place) // place 1 for vertical, 0 for horizontal
-        { 
+        /// <summary>
+        /// Function which places the wall in the given indexes.
+        /// </summary>
+        /// <param name="x">x index</param>
+        /// <param name="y">y index</param>
+        /// <param name="place">1 for vertical wall and 0 for horizontal wall.</param>
+        /// <returns>Returns true if the indexes were good and false if not.</returns>
+        public bool TurnWall(int x, int y, int place) // place 1 for vertical, 0 for horizontal
+        {
+            validWall = null;
             Player p = CurrentPlayer();
             if (p == null)
                 return false;
             if (p.walls == 0)
+            {
+                validWall = " You ran out of walls! ";
                 return false;
+            }
             // Vertical wall
             if (place == 1)
             {
                 if (!walls.IsFreeVertical(x, y) || !walls.IsFreeVertical(x + 1, y)
                     || walls.IsHorizontal(x, y))
+                {
+                    validWall = "Illeagal place to place a wall ! ";
                     return false;
+                }
                 if (!CanReach(x, y, place))
+                {
+                    validWall = "The wall blocks some player! ";
                     return false;
+                }
                 walls.vertical[x, y] = 1;
                 walls.vertical[x + 1, y] = 2;
                 matrix[x, y].right = null;
@@ -331,9 +348,15 @@ namespace QuoridorProject
             {
                 if (!walls.IsFreeHorizontal(x, y) || !walls.IsFreeHorizontal(x, y + 1)
                     || walls.IsVertical(x, y))
+                {
+                    validWall = "Illeagal place to place a wall ! ";
                     return false;
+                }
                 if (!(CanReach(x, y, place)))
+                {
+                    validWall = "The wall blockes some player! ";
                     return false;
+                }
                 walls.horizontal[x, y] = 1;
                 walls.horizontal[x, y + 1] = 2;
                 matrix[x, y].down = null;
@@ -649,34 +672,91 @@ namespace QuoridorProject
             this.index_possibleMoves = 0;
         }
 
-        public void PossibleWalls()
+        public void PossibleWalls(Player player)
         {
-            int length = this.walls.vertical.GetLength(0);
-            int width = this.walls.vertical.GetLength(1);
-            for (int i = 0; i < length; i++)
+            for (int i = player.x - 2; i < player.x + 1; i++)
             {
-                for (int j = 0; j < width; j++)
+                for (int j = player.y - 3; j < player.y + 3; j++)
                 {
-                    if (i != 8 && walls.IsFreeVertical(i, j) && walls.IsFreeVertical(i + 1, j))
+                    if (i <= 8 && i >= 0 && j <= 8 && j >= 0)
                     {
-                        Point point;
-                        point.x = i;
-                        point.y = j;
-                        point.place = 1;
-                        possibleWalls.Add(point);
-                        index_possibleWalls++;
+                        if (i != 8 && walls.IsFreeVertical(i, j) && walls.IsFreeVertical(i + 1, j))
+                        {
+                            Point point;
+                            point.x = i;
+                            point.y = j;
+                            point.place = 1;
+                            possibleWalls.Add(point);
+                            index_possibleWalls++;
+                        }
+                        if (j != 8 && walls.IsFreeHorizontal(i, j) && walls.IsFreeHorizontal(i, j + 1))
+                        {
+                            Point point;
+                            point.x = i;
+                            point.y = j;
+                            point.place = 0;
+                            possibleWalls.Add(point);
+                            index_possibleWalls++;
+                        }
                     }
-                    if (j != 8 && walls.IsFreeHorizontal(i, j) && !walls.IsFreeHorizontal(i, j + 1))
+                }
+
+            }
+            for (int i = player.y - 1; i < player.y + 1; i++)
+            {
+                for (int j = player.x - 3; j < player.x + 3; j++)
+                {
+                    if (i <= 8 && i >= 0 && j <= 8 && j >= 0)
                     {
-                        Point point;
-                        point.x = i;
-                        point.y = j;
-                        point.place = 0;
-                        possibleWalls.Add(point);
-                        index_possibleWalls++;
+                        if (i != 8 && walls.IsFreeVertical(i, j) && walls.IsFreeVertical(i + 1, j))
+                        {
+                            Point point;
+                            point.x = i;
+                            point.y = j;
+                            point.place = 1;
+                            possibleWalls.Add(point);
+                            index_possibleWalls++;
+                        }
+                        if (j != 8 && walls.IsFreeHorizontal(i, j) && !walls.IsFreeHorizontal(i, j + 1))
+                        {
+                            Point point;
+                            point.x = i;
+                            point.y = j;
+                            point.place = 0;
+                            possibleWalls.Add(point);
+                            index_possibleWalls++;
+                        }
                     }
                 }
             }
+
+
+            //int length = this.walls.vertical.GetLength(0);
+            //int width = this.walls.vertical.GetLength(1);
+            //for (int i = 0; i < length; i++)
+            //{
+            //    for (int j = 0; j < width; j++)
+            //    {
+            //        if (i != 8 && walls.IsFreeVertical(i, j) && walls.IsFreeVertical(i + 1, j))
+            //        {
+            //            Point point;
+            //            point.x = i;
+            //            point.y = j;
+            //            point.place = 1;
+            //            possibleWalls.Add(point);
+            //            index_possibleWalls++;
+            //        }
+            //        if (j != 8 && walls.IsFreeHorizontal(i, j) && !walls.IsFreeHorizontal(i, j + 1))
+            //        {
+            //            Point point;
+            //            point.x = i;
+            //            point.y = j;
+            //            point.place = 0;
+            //            possibleWalls.Add(point);
+            //            index_possibleWalls++;
+            //        }
+            //    }
+            //}
         }
 
         public void InitPossibleWalls()
@@ -910,7 +990,6 @@ namespace QuoridorProject
             ChangePlayer(CurrentPlayer());
         }
 
-        
 
         public int minimax(int depth, bool isMaximizing)
         {
