@@ -80,6 +80,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="bin\Debug\QuoridorProject.exe.config" />
     <None Include="Properties\Settings.settings">
@@ -96,6 +97,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="bin\Debug\NewFolder1\bg.png" />
     <Content Include="bin\Debug\NewFolder1\black_square.png" />
     <Content Include="bin\Debug\NewFolder1\grey_square.jpg" />
     <Content Include="bin\Debug\NewFolder1\red_square.jpg" />

@@ -5,6 +5,9 @@ using System.Windows.Forms;
 
 namespace QuoridorProject
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Board
     {
         int choice;
@@ -27,8 +30,8 @@ namespace QuoridorProject
         public Player[] pArr; // array of all players
         public int numOfPlayers; // num of players. at first is 0.
         private Vertices[,] matrix = new Vertices[ROW, COL];
-        private const int ROW = 9;
-        private const int COL = 9;
+        public const int ROW = 9;
+        public const int COL = 9;
         internal Cell[,] board;
 
         // ---------------------------constructor--------------------------------
@@ -40,6 +43,14 @@ namespace QuoridorProject
             this.numOfPlayers = 0; // current num of players
             scores.Add(0, 1);
             scores.Add(1, -1);
+
+            for (int row_index = 0; row_index < ROW; row_index++)
+            {
+                for (int col_index = 0; col_index < ROW; col_index++)
+                {
+                    matrix[row_index, col_index] = new Vertices();
+                }
+            }
             SetVerticesMatrix();
         }
 
@@ -161,14 +172,6 @@ namespace QuoridorProject
             {
                 for (int col_index = 0; col_index < ROW; col_index++)
                 {
-                    matrix[row_index, col_index] = new Vertices();
-                }
-            }
-
-            for (int row_index = 0; row_index < ROW; row_index++)
-            {
-                for (int col_index = 0; col_index < ROW; col_index++)
-                {
                     if (col_index > 0) // have left neighbor
                     {
                         this.matrix[row_index, col_index].
@@ -199,36 +202,38 @@ namespace QuoridorProject
         /// </summary>
         /// <param name="x">x index</param>
         /// <param name="y">y index</param>
-        public void PlayerTurn(int x, int y)
+        public int PlayerTurn(int x, int y)
         {
             // outside the area of the board
             if (x > 530 || x < 0 || y > 530 || y < 0)
-                return;
+                return 0;
             // at the middle of vertical and horizontal wall
             if (x % 60 >= 50 && y % 60 >= 50)
-                return;
+                return 0;
             // wall
             if (x % 60 >= 50 || y % 60 >= 50)
             {
                 // Vertical wall
                 if (x % 60 >= 50 && y >= 0 && y <= 460)
                     if (!TurnWall(y / 60, x / 60, 1))
-                        return;
+                        return 0;
                 //horizontal wall
                 if (y % 60 >= 50 && x >= 0 && x <= 470)
                     if (!TurnWall(y / 60, x / 60, 0))
-                        return;
-                
-                if(this.choice==1)
-                    AI.Move(this, CurrentPlayer());
+                        return 0;
+
+                if (this.choice == 1)
+                    return 1;
+                    //AI.Move(this, CurrentPlayer());
             }
             else
             {
                 // move
-                TurnMove(y / 60, x / 60);
+                return TurnMove(y / 60, x / 60);
                 //ChangePlayer(CurrentPlayer());
             }
             UpdateBoard();
+            return 0;
             //if (Iswin()!=-1)
             //{
             //    MessageBox.Show("Winner!!!");
@@ -241,13 +246,13 @@ namespace QuoridorProject
         /// </summary>
         /// <param name="x">x index</param>
         /// <param name="y">y index</param>
-        public void TurnMove(int x, int y)
+        public int TurnMove(int x, int y)
         {
             validWall = null ;
             bool check = false;
             Player p = CurrentPlayer();
             if (p == null)
-                return;
+                return 0;
             for (int i = 0; i < index_possibleMoves; i++)
             {
                 if (possibleMove[i].x == x && possibleMove[i].y == y)
@@ -264,10 +269,12 @@ namespace QuoridorProject
                     break;
                 }
             }
-            if (this.choice == 1&&check)
-                AI.Move(this, CurrentPlayer());
+            if (this.choice == 1 && check)
+                return 1;
+                //AI.Move(this, CurrentPlayer());
             if (!check)
                 validWall = " Illeagal Place to move! ";
+            return 0;
         }
 
         public Point TurnMoveTemp(int x, int y)
@@ -477,6 +484,11 @@ namespace QuoridorProject
             return false;
         }
 
+        public bool InLimits(int x,int y)
+        {
+            return x >= 0 && x <= 8 && y >= 0 && y <= 8;
+        }
+
         /// <summary>
         /// A function that finds all of the cuurent player's possible moves. and adds them to the array possibleMoves
         /// </summary>
@@ -497,7 +509,7 @@ namespace QuoridorProject
             }
             if (yCell > 0)
             {
-                if (this.matrix[xCell, yCell].left != null)
+                if (InLimits(xCell,yCell)&&this.matrix[xCell, yCell].left != null )
                 {
                     if (AnotherPlayerPos(xCell, yCell-1))
                     {
@@ -536,7 +548,7 @@ namespace QuoridorProject
             }
             if (yCell < ROW - 1)
             {
-                if (this.matrix[xCell, yCell].right != null)
+                if (InLimits(xCell, yCell) && this.matrix[xCell, yCell].right != null)
                 {
                     if (AnotherPlayerPos(xCell, yCell + 1))
                     {
@@ -576,7 +588,7 @@ namespace QuoridorProject
             }
             if (xCell < ROW - 1)
             {
-                if (this.matrix[xCell, yCell].down != null)
+                if (InLimits(xCell, yCell) && this.matrix[xCell, yCell].down != null)
                 {
                     if (AnotherPlayerPos(xCell + 1, yCell))
                     {
@@ -616,7 +628,7 @@ namespace QuoridorProject
             }
             if (xCell > 0)
             {
-                if (this.matrix[xCell, yCell].up != null)
+                if (InLimits(xCell, yCell) && this.matrix[xCell, yCell].up != null)
                 {
                     if (AnotherPlayerPos(xCell - 1, yCell))
                     {
@@ -654,7 +666,6 @@ namespace QuoridorProject
                     }
                 }
             }
-            UpdateBoard();
         }
 
         /// <summary>
@@ -674,9 +685,9 @@ namespace QuoridorProject
 
         public void PossibleWalls(Player player)
         {
-            for (int i = player.x - 2; i < player.x + 1; i++)
+            for (int i = player.x - 1; i < player.x + 1; i++)
             {
-                for (int j = player.y - 3; j < player.y + 3; j++)
+                for (int j = player.y - 2; j < player.y + 2; j++)
                 {
                     if (i <= 8 && i >= 0 && j <= 8 && j >= 0)
                     {
@@ -704,7 +715,7 @@ namespace QuoridorProject
             }
             for (int i = player.y - 1; i < player.y + 1; i++)
             {
-                for (int j = player.x - 3; j < player.x + 3; j++)
+                for (int j = player.x - 2; j < player.x + 2; j++)
                 {
                     if (i <= 8 && i >= 0 && j <= 8 && j >= 0)
                     {
@@ -770,6 +781,33 @@ namespace QuoridorProject
         /// </summary>
         public void UpdateBoard()
         {
+            SetVerticesMatrix();
+            for (int i = 0; i < ROW; i++)
+            {
+                for (int j = 0; j < COL; j++)
+                {
+                    if (walls.IsVertical(i,j))
+                    {
+                        matrix[i, j].right = null;
+                        if (i != 8)
+                            matrix[i + 1, j].right = null;
+                        if (j != 8)
+                            matrix[i, j + 1].left = null;
+                        if (j != 8 && i != 8)
+                            matrix[i + 1, j + 1].left = null;
+                    }
+                    if (walls.IsHorizontal(i,j))
+                    {
+                        matrix[i, j].down = null;
+                        if (j != 8)
+                            matrix[i, j + 1].down = null;
+                        if (i != 8)
+                            matrix[i + 1, j].up = null;
+                        if (j != 8 && i != 8)
+                            matrix[i + 1, j + 1].up = null;
+                    }
+                }
+            }
             for (int i = 0; i < numOfPlayers; i++)
             {
                 board[pArr[i].x, pArr[i].y].Change(pArr[i].num);
@@ -789,6 +827,8 @@ namespace QuoridorProject
         /// </returns>
         public bool CanReach(int xCell, int yCell, int place)
         {
+            UpdateBoard();
+
             bool playerOne = false;
             bool playerTwo = false;
             bool playerThree = false;
@@ -989,7 +1029,6 @@ namespace QuoridorProject
             TurnMove(x, y);
             ChangePlayer(CurrentPlayer());
         }
-
 
         public int minimax(int depth, bool isMaximizing)
         {

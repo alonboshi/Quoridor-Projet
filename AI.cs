@@ -9,14 +9,19 @@ namespace QuoridorProject
 {
     public static class AI
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <param name="player"></param>
+        /// <returns></returns>
         public static bool Move(Board matrix, Player player)
         {
-            matrix.UpdateBoard();
             int indexBest = 0;   // how many similar best moves
             List<Tuple<int, int>> minList_AI = new List<Tuple<int, int>>(); // the list of the AI's shortest way to the goal. 
             List<List<Tuple<int, int>>> allBest = new List<List<Tuple<int, int>>>(); // A list of all the AI's shortest way with the same count of steps to goal
             int minVal = int.MaxValue; // minimum steps to the goal
-            for (int i = 0; i < 9; i++)
+            for (int i = 0; i < Board.COL; i++)
             {
                 // List of Locations on the wall which represents the most little way
                 List<Tuple<int, int>> tempList = matrix.GetShortestPath(player.x, player.y, player.goalx, i); // way from player's location to col 0-9 in his row goal
@@ -41,7 +46,7 @@ namespace QuoridorProject
                 }
                 
 
-                Console.WriteLine("Checking my " + i + " way" + "  " + tempList.Count);
+                //Console.WriteLine("Checking my " + i + " way" + "  " + tempList.Count);
 
             }
             Player opponent = matrix.ChangePlayerWithReturn(matrix.CurrentPlayer()); // the human
@@ -59,7 +64,7 @@ namespace QuoridorProject
                     minVal2 = tempList.Count;
                     min_goalcell_index = i;
                 }
-                Console.WriteLine("Checking opponent " + i + " way" + "  " + tempList.Count);
+                //Console.WriteLine("Checking opponent " + i + " way" + "  " + tempList.Count);
 
             }
             if (minList_AI == null || minList_human == null || min_goalcell_index == -1)
@@ -80,7 +85,7 @@ namespace QuoridorProject
                     List<Vertices> list = matrix.TurnWallTemp(matrix.possibleWalls[i].x, matrix.possibleWalls[i].y, matrix.possibleWalls[i].place);
                     List<Tuple<int, int>> tempList = matrix.GetShortestPath(opponent.x, opponent.y, opponent.goalx, min_goalcell_index);
                     matrix.UndoTurnWallTemp(list, matrix.possibleWalls[i].x, matrix.possibleWalls[i].y, matrix.possibleWalls[i].place);
-                    Console.WriteLine("Calculate wall " + i + "  " + tempList.Count);
+                    //Console.WriteLine("Calculate wall " + i + "  " + tempList.Count);
 
                     if (tempList.Count > minVal2)
                     {
@@ -105,18 +110,15 @@ namespace QuoridorProject
                         indexWallBest++;
                     }
                 }
-                if (minListWall != null && wallChangeBest.Count < matrix.index_possibleWalls / 2)
+                if (minListWall != null && (wallChangeBest.Count < matrix.index_possibleWalls / 2||minListWall.Count<5))
                 {
-                    Random rndWall = new Random();
-                    int randomWallBest = rndWall.Next(0, indexWallBest);
-                    Console.WriteLine("rnd: " + randomWallBest + " " + indexWallBest);
-                    Point THEWALL = wallChangeBest[randomWallBest];
-                    Console.WriteLine(THEWALL.x + " " + THEWALL.y + " " + THEWALL.place);
+                    Point THEWALL = Max_Benefit(wallChangeBest,matrix,player,min_goalcell_index);
+                    //Console.WriteLine(THEWALL.x + " " + THEWALL.y + " " + THEWALL.place);
                     if (matrix.CanReach(THEWALL.x, THEWALL.y, THEWALL.place))
                     {
                         if (matrix.TurnWall(THEWALL.x, THEWALL.y, THEWALL.place))
                         {
-                            Console.WriteLine("succeed");
+                            //Console.WriteLine("succeed");
                             return true;
                         }
                     }
@@ -151,6 +153,53 @@ namespace QuoridorProject
             matrix.UpdateBoard();
             return true;
         
+        }
+
+        public static Point Max_Benefit(List<Point> points,Board matrix,Player player,int min_goalcell_index)
+        {
+            int indexWallBest = 0;
+            List<Tuple<int, int>> minListWall = null;
+            List<Point> wallChangeBest = new List<Point>();
+            matrix.InitPossibleWalls();
+            matrix.PossibleWalls(player);
+            int minVal = int.MaxValue;
+            for (int i = 0; i < points.Count; i++)
+            {
+                List<Vertices> list = matrix.TurnWallTemp(points[i].x,points[i].y,points[i].place);
+                List<Tuple<int, int>> tempList = matrix.GetShortestPath(player.x, player.y, player.goalx, min_goalcell_index);
+                matrix.UndoTurnWallTemp(list, points[i].x, points[i].y, points[i].place);
+                //Console.WriteLine("Calculate wall " + i + "  " + tempList.Count);
+
+                if (tempList.Count < minVal)
+                {
+                    minVal = tempList.Count;
+                    minListWall = tempList;
+                    wallChangeBest.Clear();
+                    Point point;
+                    point.x = points[i].x;
+                    point.y = points[i].y;
+                    point.place = points[i].place;
+                    wallChangeBest.Add(point);
+                    indexWallBest = 1;
+                }
+                else if (tempList.Count == minVal)
+                {
+                    Point point;
+                    minListWall = tempList;
+                    point.x = points[i].x;
+                    point.y = points[i].y;
+                    point.place = points[i].place;
+                    wallChangeBest.Add(point);
+                    indexWallBest++;
+                }
+            }
+            if (minListWall != null && wallChangeBest.Count != 0)
+            {
+                Random rndWall = new Random();
+                int randomWallBest = rndWall.Next(0, indexWallBest);
+                return wallChangeBest[randomWallBest];
+            }
+            return wallChangeBest[0];
         }
         /*// tree node class definition
         public class TreeNode

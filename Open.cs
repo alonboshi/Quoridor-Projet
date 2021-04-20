@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
+using System.Threading;
+
 
 namespace QuoridorProject
 {
@@ -30,9 +32,13 @@ namespace QuoridorProject
 
         private void Open_Load(object sender, EventArgs e)
         {
+            if (this.choice != 3)
+                button1.Hide();
             board.AddPlayer();
             board.AddPlayer();
             board.SetCellBoard();
+            
+            
         }
 
         private void Open_Paint(object sender, PaintEventArgs e)
@@ -106,7 +112,7 @@ namespace QuoridorProject
 
         private void MouseDown_pb1(object sender, MouseEventArgs e)
         {
-            
+            int check = 0;
             if (choice == 2)
             {
                 //MessageBox.Show(e.X + " " + e.Y);
@@ -114,13 +120,21 @@ namespace QuoridorProject
             }
             else if (choice == 1)
             {
-                board.PlayerTurn(e.X, e.Y);
+                check = board.PlayerTurn(e.X, e.Y);
             }
             
             board.InitPossibleMoves();
             board.PossibleMoves(null);
             board.UpdateBoard();
             pictureBox1.Refresh();
+            if (check == 1)
+            {
+                AI.Move(board, board.CurrentPlayer());
+                board.InitPossibleMoves();
+                board.PossibleMoves(null);
+                board.UpdateBoard();
+                pictureBox1.Refresh();
+            }
         }
 
         private void MouseEnter_pb1(object sender, EventArgs e)
@@ -150,6 +164,21 @@ namespace QuoridorProject
                     pictureBox1.Refresh();
                     AI.Move(board, board.CurrentPlayer());
                 }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Choice ch = new Choice();
+            ch.Show();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            
+            Open op = new Open(choice);
+            op.Show();
+            this.Close();
         }
     }
 }
