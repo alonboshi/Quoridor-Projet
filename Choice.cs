@@ -12,7 +12,7 @@ namespace QuoridorProject
 {
     public partial class Choice : Form
     {
-        bool isClicked = false;
+        bool isClicked = false; // Play button
         public Choice()
         {
             InitializeComponent();
@@ -47,7 +47,7 @@ namespace QuoridorProject
             this.Hide();
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void button4_Click(object sender, EventArgs e) // PLAY
         {
             isClicked = !isClicked;
             if (isClicked)
@@ -62,6 +62,12 @@ namespace QuoridorProject
                 button2.Hide();
                 button3.Hide();
             }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            Instructions info = new Instructions();
+            info.Show();
         }
     }
 }

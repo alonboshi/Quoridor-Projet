@@ -13,7 +13,6 @@ namespace QuoridorProject
         //2 - yes . part 2
         public int[,] horizontal { get; set; }
         public int[,] vertical { get; set; }
-        //LinkedList<Tuple<int,int>> ll = new LinkedList<Tuple<int, int>>();
 
         public Wall()
         {
@@ -31,19 +30,19 @@ namespace QuoridorProject
                 }
             }
         }
-        public bool IsFreeHorizontal(int x, int y)
+        public bool IsFreeHorizontal(int x, int y) // if we can put there horizontal wall
         {
             return horizontal[x, y] == 0;
         }
-        public bool IsFreeVertical(int x, int y)
+        public bool IsFreeVertical(int x, int y) // if we can put there vertical wall
         {
             return vertical[x, y] == 0;
         }
-        public bool IsHorizontal(int x, int y)
+        public bool IsHorizontal(int x, int y) // if there is already horizontal wall
         {
             return horizontal[x, y] == 1;
         }
-        public bool IsVertical(int x, int y)
+        public bool IsVertical(int x, int y) // if there is already vertical wall
         {
             return vertical[x, y] == 1;
         }

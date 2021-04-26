@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Threading;
-
+using System.Diagnostics;
 
 namespace QuoridorProject
 {
@@ -18,7 +18,7 @@ namespace QuoridorProject
         int choice;
         Board board;
         Graphics g;
-
+        
         public Open(int num) {
             InitializeComponent();
             this.choice = num;
@@ -28,6 +28,7 @@ namespace QuoridorProject
         public Open()
         {
          //   InitializeComponent();
+
         }
 
         private void Open_Load(object sender, EventArgs e)
@@ -77,15 +78,31 @@ namespace QuoridorProject
             }
             if (board.Iswin() != -1)
             {
+                string str = "";
                 switch (board.CurrentPlayer().num)
                 {
-                    case 0: MessageBox.Show("Red's Player won!!");
+                    case 0:
+                        str=("Red's Player won!!");
                         break;
-                    case 1: MessageBox.Show("Black's Player won!!");
+                    case 1:
+                        str=("Black's Player won!!");
                         break;
-
-
                 }
+
+                DialogResult dialogResult = MessageBox.Show("Would you like to exit?", str , MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    this.Close();
+                    System.Windows.Forms.Application.Exit();
+                }
+                else if (dialogResult == DialogResult.No)
+                {
+                    
+                Thread.Sleep(5000);
+                 System.Windows.Forms.Application.Exit();
+                    //do something else
+                }
+
                 /*pictureBox1.Refresh();
                 string message = "You did not enter a server name. Cancel this operation?";
                 string caption = "Error Detected in Input";
@@ -115,7 +132,6 @@ namespace QuoridorProject
             int check = 0;
             if (choice == 2)
             {
-                //MessageBox.Show(e.X + " " + e.Y);
                 board.PlayerTurn(e.X, e.Y);
             }
             else if (choice == 1)
@@ -129,7 +145,12 @@ namespace QuoridorProject
             pictureBox1.Refresh();
             if (check == 1)
             {
+                Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Start();
                 AI.Move(board, board.CurrentPlayer());
+                stopWatch.Stop();
+                TimeSpan ts = stopWatch.Elapsed;
+                Console.WriteLine(ts.Seconds);
                 board.InitPossibleMoves();
                 board.PossibleMoves(null);
                 board.UpdateBoard();
@@ -139,8 +160,8 @@ namespace QuoridorProject
 
         private void MouseEnter_pb1(object sender, EventArgs e)
         {
-            Point screenPosition = MousePosition;
-            Point clientPosition = PointToClient(screenPosition);
+            //    Point screenPosition = MousePosition;
+            //    Point clientPosition = PointToClient(screenPosition);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -153,7 +174,7 @@ namespace QuoridorProject
 
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
+        private void button1_Click_1(object sender, EventArgs e) // AI VS AI start button
         {
             if (choice == 3)
                 while (board.Iswin() == -1)
@@ -162,23 +183,35 @@ namespace QuoridorProject
                     board.PossibleMoves(null);
                     board.UpdateBoard();
                     pictureBox1.Refresh();
+                    Stopwatch stopWatch = new Stopwatch();
+                    stopWatch.Start();
                     AI.Move(board, board.CurrentPlayer());
+                    stopWatch.Stop();
+                    TimeSpan ts = stopWatch.Elapsed;
+                    Console.WriteLine(ts.Seconds);
                 }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            this.Close();
-            Choice ch = new Choice();
-            ch.Show();
+            System.Windows.Forms.Application.Exit();
+            //this.Close();
+            //Choice ch = new Choice();
+            //ch.Show();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            
+            this.Close();
             Open op = new Open(choice);
             op.Show();
+        }
+
+        private void button3_Click_1(object sender, EventArgs e)
+        {
             this.Close();
+            Open op = new Open(choice);
+            op.Show();
         }
     }
 }

@@ -11,7 +11,6 @@ namespace QuoridorProject
     public class Board
     {
         int choice;
-
         public Dictionary<int, int> scores = new Dictionary<int, int>();
         public int count = 0;
 
@@ -224,21 +223,14 @@ namespace QuoridorProject
 
                 if (this.choice == 1)
                     return 1;
-                    //AI.Move(this, CurrentPlayer());
             }
             else
             {
                 // move
                 return TurnMove(y / 60, x / 60);
-                //ChangePlayer(CurrentPlayer());
             }
             UpdateBoard();
             return 0;
-            //if (Iswin()!=-1)
-            //{
-            //    MessageBox.Show("Winner!!!");
-            //    InitPossibleMoves();
-            //}
         }
 
         /// <summary>
@@ -248,7 +240,7 @@ namespace QuoridorProject
         /// <param name="y">y index</param>
         public int TurnMove(int x, int y)
         {
-            validWall = null ;
+            validWall = null ; 
             bool check = false;
             Player p = CurrentPlayer();
             if (p == null)
@@ -271,7 +263,6 @@ namespace QuoridorProject
             }
             if (this.choice == 1 && check)
                 return 1;
-                //AI.Move(this, CurrentPlayer());
             if (!check)
                 validWall = " Illeagal Place to move! ";
             return 0;
@@ -351,6 +342,7 @@ namespace QuoridorProject
                     matrix[x + 1, y + 1].left = null;
                 p.walls--;
             }
+            // horizontal
             if (place == 0)
             {
                 if (!walls.IsFreeHorizontal(x, y) || !walls.IsFreeHorizontal(x, y + 1)
@@ -375,15 +367,11 @@ namespace QuoridorProject
                     matrix[x + 1, y + 1].up = null;
                 p.walls--;
             }
-            //if (choice == 2)
              ChangePlayer(p);
             return true;
         }
 
-        public void ShowWall(Point p) 
-        { 
-            
-        }
+        
 
         /// <summary>
         /// Function which places the wall in the given indexes. just temporary.
@@ -687,7 +675,7 @@ namespace QuoridorProject
         {
             for (int i = player.x - 1; i < player.x + 1; i++)
             {
-                for (int j = player.y - 2; j < player.y + 2; j++)
+                for (int j = player.y - 1; j < player.y + 1; j++)
                 {
                     if (i <= 8 && i >= 0 && j <= 8 && j >= 0)
                     {
@@ -715,7 +703,7 @@ namespace QuoridorProject
             }
             for (int i = player.y - 1; i < player.y + 1; i++)
             {
-                for (int j = player.x - 2; j < player.x + 2; j++)
+                for (int j = player.x - 1; j < player.x + 1; j++)
                 {
                     if (i <= 8 && i >= 0 && j <= 8 && j >= 0)
                     {
@@ -831,8 +819,6 @@ namespace QuoridorProject
 
             bool playerOne = false;
             bool playerTwo = false;
-            bool playerThree = false;
-            bool playerFour = false;
 
             // player 1
             if (numOfPlayers < 1)
@@ -875,16 +861,8 @@ namespace QuoridorProject
                     UndoTurnWallTemp(temp_ver, xCell, yCell, place);
                 }
             }
-            //------------------------------------------------------------------------------------
-            // player 3
-            if (numOfPlayers < 3)
-                playerThree = true;
-            //------------------------------------------------------------------------------------
-            // player 4
-            if (numOfPlayers < 4)
-                playerFour = true;
 
-            return playerOne && playerTwo && playerThree && playerFour;
+            return playerOne && playerTwo;
         }
 
         /// <summary>
@@ -903,14 +881,13 @@ namespace QuoridorProject
             int xEnd, int yEnd)
         {
             List<Tuple<int, int>> shortestPath = new List<Tuple<int, int>>();
-            List<Vertices> path = SearchBFS(matrix[xStart, yStart], matrix[xEnd, yEnd]);
+            List<Vertices> path = SearchBFS( matrix[xStart, yStart], matrix[xEnd, yEnd]);
             foreach (Vertices item in path)
             {
                 shortestPath.Add(new Tuple<int, int>(item.id / ROW, item.id % ROW));
             }
             return shortestPath;
         }
-
         private List<Vertices> SearchBFS(Vertices start, Vertices finish)
         {
             Vertices startVer, finishVer;
@@ -1004,63 +981,6 @@ namespace QuoridorProject
                 }
                 x = 0;
                 y += 60;
-            }
-        }
-
-        public void bestMove()
-        {
-            // AI to make its turn
-            int bestScore = int.MinValue;
-            int x = -1, y = -1;
-            for (int i = 0; i < index_possibleMoves; i++)
-            {
-                Point undo=TurnMoveTemp(possibleMove[i].x, possibleMove[i].y);
-                count++;
-                int score = minimax(0, false);
-                UndoTurnMoveTemp(undo);
-                if (score > bestScore)
-                {
-                    bestScore = score;
-                    x = possibleMove[i].x;
-                    y = possibleMove[i].y;
-                }
-              
-            }
-            TurnMove(x, y);
-            ChangePlayer(CurrentPlayer());
-        }
-
-        public int minimax(int depth, bool isMaximizing)
-        {
-            int result = Iswin();
-            if (result!=-1)
-            {
-                return scores[result];
-            }
-
-            if (isMaximizing)
-            {
-                int bestScore = int.MinValue;
-                for (int i = 0; i < index_possibleMoves; i++)
-                {
-                    Point undo = TurnMoveTemp(possibleMove[i].x, possibleMove[i].y);
-                    int score = minimax(depth + 1, false);
-                    UndoTurnMoveTemp(undo);
-                    bestScore = Math.Max(score, bestScore);
-                }
-                return bestScore;
-            }
-            else
-            {
-                int bestScore = int.MinValue;
-                for (int i = 0; i < index_possibleMoves; i++)
-                {
-                    Point undo = TurnMoveTemp(possibleMove[i].x, possibleMove[i].y);
-                    int score = minimax(depth + 1, true);
-                    UndoTurnMoveTemp(undo);
-                    bestScore = Math.Min(score, bestScore);
-                }
-                return bestScore;
             }
         }
     }

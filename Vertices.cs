@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace QuoridorProject
 {
+    /// <summary>
+    /// the graph board. each vertice 
+    /// </summary>
     public class Vertices
     {
         public enum Players { EMPTY, BLACK, WHITE, RED, BLUE };
@@ -28,18 +31,17 @@ namespace QuoridorProject
             this.id = id_ver++;
         }
 
+        /// <summary>
+        /// gets the possible moves and returns the same list converted to vertices
+        /// </summary>
+        /// <param name="arr"> An array of possible moves</param>
+        /// <param name="index"> how many possible moves </param>
+        /// <param name="matrix"> the graph board </param>
+        /// <returns></returns>
         public List<Vertices> GetNeighbors(Board.Point[] arr,int index,Vertices[,] matrix)
         {
 
             List<Vertices> neighbors = new List<Vertices>();
-            //if (this.up != null)
-            //    neighbors.Add(this.up);
-            //if (this.down != null)
-            //    neighbors.Add(this.down);
-            //if (this.right != null)
-            //    neighbors.Add(this.right);
-            //if (this.left != null)
-            //    neighbors.Add(this.left);
             for (int i = 0; i < index; i++)
             {
                 neighbors.Add(matrix[arr[i].x, arr[i].y]);

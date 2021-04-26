@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -55,6 +58,12 @@
       <DependentUpon>Choice.cs</DependentUpon>
     </Compile>
     <Compile Include="AI.cs" />
+    <Compile Include="Instructions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Instructions.Designer.cs">
+      <DependentUpon>Instructions.cs</DependentUpon>
+    </Compile>
     <Compile Include="Open.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -69,6 +78,9 @@
     <EmbeddedResource Include="Choice.resx">
       <DependentUpon>Choice.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Instructions.resx">
+      <DependentUpon>Instructions.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Open.resx">
       <DependentUpon>Open.cs</DependentUpon>
     </EmbeddedResource>
@@ -82,7 +94,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include=".editorconfig" />
     <None Include="bin\Debug\QuoridorProject.exe.config" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -97,9 +111,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="icon.ico" />
     <None Include="bin\Debug\NewFolder1\bg.png" />
     <Content Include="bin\Debug\NewFolder1\black_square.png" />
     <Content Include="bin\Debug\NewFolder1\grey_square.jpg" />
+    <None Include="bin\Debug\NewFolder1\Instructions.png" />
     <Content Include="bin\Debug\NewFolder1\red_square.jpg" />
     <Content Include="bin\Debug\QuoridorProject.exe" />
     <Content Include="bin\Debug\QuoridorProject.pdb" />

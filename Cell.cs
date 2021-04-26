@@ -9,6 +9,9 @@ using System.Windows.Forms;
 
 namespace QuoridorProject
 {
+    /// <summary>
+    /// the visual matrix of the board. this class represents each cell of the matrix.
+    /// </summary>
     class Cell
     {
         private Image newImage;
@@ -94,43 +97,44 @@ namespace QuoridorProject
             }
         }
 
+        // red's player
         public void Red()
         {
             string dir = Directory.GetCurrentDirectory();
             string filename = Path.Combine(dir, @"NewFolder1\red_square.jpg");
             this.newImage = Image.FromFile(filename);
         }
+        // red's player - posibble moves
         public void Red_pm()
         {
             string dir = Directory.GetCurrentDirectory();
             string filename = Path.Combine(dir, @"NewFolder1\red_square_pm.jpg");
             this.newImage = Image.FromFile(filename);
         }
+
+        // black's player
         public void Black()
         {
             string dir = Directory.GetCurrentDirectory();
             string filename = Path.Combine(dir, @"NewFolder1\black_square.jpeg");
             this.newImage = Image.FromFile(filename);
         }
+
+        // black's player - posibble moves
         public void Black_pm()
         {
             string dir = Directory.GetCurrentDirectory();
             string filename = Path.Combine(dir, @"NewFolder1\black_square_pm.jpg");
             this.newImage = Image.FromFile(filename);
         }
-        public void Blue()
-        {
 
-        }
-        public void White()
-        {
-
-        }
         public void PaintCell(Graphics g, int x, int y)
         {
             Point p = new Point(x, y);
             g.DrawImage(this.newImage, p);
         }
+
+        // horizontal wall
         public void PaintHorizontal(Graphics g, int x, int y)
         {
             Point p = new Point(x, y);
@@ -138,6 +142,8 @@ namespace QuoridorProject
             string filename = Path.Combine(dir, @"NewFolder1\wall_horizontal.jpg");
             g.DrawImage(Image.FromFile(filename), p);
         }
+
+        // vertical wall
         public void PaintVertical(Graphics g, int x, int y)
         {
             Point p = new Point(x, y);
